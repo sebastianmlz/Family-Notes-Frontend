@@ -7,7 +7,7 @@ import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideBrowserGlobalErrorListeners(), 
+    provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     providePrimeNG({
       ripple: true,
@@ -17,10 +17,10 @@ export const appConfig: ApplicationConfig = {
           darkModeSelector: '.my-app-dark',
           cssLayer: {
             name: 'primeng',
-            order: 'theme, base, primeng'
-          }
-        }
-      }
-    })
+            order: 'theme, base, primeng',
+          },
+        },
+      },
+    }),
   ],
 };
