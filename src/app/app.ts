@@ -1,22 +1,18 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
+import { Navbar } from './shared/components/navbar/navbar';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ButtonModule],
+  imports: [RouterOutlet, Navbar],
   templateUrl: './app.html',
-  styleUrl: './app.css',
+  styleUrls: ['./app.css']
 })
 export class App {
-  protected readonly title = signal('family-notes-frontend');
+  private authService = inject(AuthService);
 
-  toggleDarkMode() {
-    // Buscamos la etiqueta <html>
-    const htmlElement = document.querySelector('html');
-    if (htmlElement) {
-      // La función 'toggle' pone la clase si no existe, y la quita si ya existe
-      htmlElement.classList.toggle('my-app-dark');
-    }
-  }
+  protected readonly title = signal('family-notes-frontend');
+  readonly isAuthenticated = this.authService.isAuthenticated;
+
 }

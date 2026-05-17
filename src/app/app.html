@@ -1,8 +1,5 @@
-<div
-  class="flex flex-col items-center justify-center min-h-screen bg-surface-0 dark:bg-surface-900 transition-colors duration-300"
->
-  <h1 class="text-4xl font-bold text-color mb-8">¡Frontend Profesional Listo!</h1>
-  <p-button label="Cambiar Tema" icon="pi pi-moon" (onClick)="toggleDarkMode()"> </p-button>
-</div>
+@if (isAuthenticated()) {
+  <app-navbar></app-navbar>
+}
 
 <router-outlet />
