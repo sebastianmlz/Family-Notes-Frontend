@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "prebuild": "mkdir -p src/environments && echo \"export const environment = { production: true, apiBaseUrl: '$apiBaseUrl' };\" > src/environments/environment.prod.ts",
+    "prebuild": "mkdir -p src/environments && echo \"export const environment = { production: true, apiBaseUrl: '$apiBaseUrl' };\" > src/environments/environment.ts && cp src/environments/environment.ts src/environments/environment.prod.ts",
     "lint": "eslint \"src/**/*.{ts,js,html}\" --ext .ts,.html",
     "lint:fix": "eslint \"src/**/*.{ts,js,html}\" --ext .ts,.html --fix",
     "format": "prettier --write \"src/**/*.{ts,html,css,scss,json,md}\"",
