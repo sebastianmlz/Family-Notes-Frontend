@@ -16,10 +16,10 @@ import { AuthService } from '../../../../core/services/auth.service';
     InputTextModule,
     PasswordModule,
     ButtonModule,
-    FloatLabelModule
+    FloatLabelModule,
   ],
   templateUrl: './login-form.html',
-  styleUrls: ['./login-form.css']
+  styleUrls: ['./login-form.css'],
 })
 export class LoginForm {
   private fb = inject(FormBuilder);
@@ -31,7 +31,7 @@ export class LoginForm {
 
   loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(4)]]
+    password: ['', [Validators.required, Validators.minLength(4)]],
   });
 
   onSubmit(): void {
@@ -52,7 +52,7 @@ export class LoginForm {
       },
       error: (err) => {
         this.isLoading.set(false);
-        
+
         if (err.status === 401) {
           this.errorMessage.set('Usuario o contraseña incorrectos. Verifica tus credenciales.');
         } else if (err.status === 0) {
@@ -60,9 +60,9 @@ export class LoginForm {
         } else {
           this.errorMessage.set('Ocurrió un error inesperado al intentar iniciar sesión.');
         }
-        
+
         console.error('Login Error:', err);
-      }
+      },
     });
   }
 }

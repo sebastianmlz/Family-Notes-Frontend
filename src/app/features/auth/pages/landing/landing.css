@@ -1,41 +1,47 @@
 .animated-card-wrapper {
-    animation: demo-dialog-in 500ms ease-out forwards;
-    will-change: transform, opacity, filter;
+  animation: demo-dialog-in 500ms ease-out forwards;
+  will-change: transform, opacity, filter;
 }
 
 .animated-card-wrapper.leaving {
-    animation: demo-dialog-out 300ms ease-in forwards;
+  animation: demo-dialog-out 300ms ease-in forwards;
 }
 
 .animate-fade-in {
-    animation: simple-fade 400ms ease-out forwards;
+  animation: simple-fade 400ms ease-out forwards;
 }
 
 @keyframes demo-dialog-in {
-    from {
-        opacity: 0;
-        transform: translateY(-10%) scale(1.1);
-        filter: blur(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(-10%) scale(1.1);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
 }
 
 @keyframes demo-dialog-out {
-    from {
-        opacity: 1;
-        transform: translateY(0) rotate(0deg);
-    }
-    to {
-        opacity: 0;
-        transform: translateY(200%) rotate(-90deg);
-    }
+  from {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(200%) rotate(-90deg);
+  }
 }
 
 @keyframes simple-fade {
-    from { opacity: 0; transform: scale(0.98); }
-    to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

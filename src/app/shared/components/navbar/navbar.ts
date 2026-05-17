@@ -9,7 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
   selector: 'app-navbar',
   imports: [ToolbarModule, ButtonModule, ThemeToggle],
   templateUrl: './navbar.html',
-  styleUrls: ['./navbar.css']
+  styleUrls: ['./navbar.css'],
 })
 export class Navbar {
   private authService = inject(AuthService);

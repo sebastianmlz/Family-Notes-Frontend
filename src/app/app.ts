@@ -7,12 +7,11 @@ import { AuthService } from './core/services/auth.service';
   selector: 'app-root',
   imports: [RouterOutlet, Navbar],
   templateUrl: './app.html',
-  styleUrls: ['./app.css']
+  styleUrls: ['./app.css'],
 })
 export class App {
   private authService = inject(AuthService);
 
   protected readonly title = signal('family-notes-frontend');
   readonly isAuthenticated = this.authService.isAuthenticated;
-
 }

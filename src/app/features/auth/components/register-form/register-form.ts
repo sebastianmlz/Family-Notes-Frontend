@@ -17,10 +17,10 @@ import { RegisterCredentials } from '../../../../core/models/auth.model';
     InputTextModule,
     PasswordModule,
     ButtonModule,
-    FloatLabelModule
+    FloatLabelModule,
   ],
   templateUrl: './register-form.html',
-  styleUrls: ['./register-form.css']
+  styleUrls: ['./register-form.css'],
 })
 export class RegisterForm {
   private fb = inject(FormBuilder);
@@ -36,7 +36,7 @@ export class RegisterForm {
     family_name: ['', [Validators.required, Validators.minLength(2)]],
     username: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]] 
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   onSubmit(): void {
@@ -57,17 +57,19 @@ export class RegisterForm {
       },
       error: (err) => {
         this.isLoading.set(false);
-        
+
         if (err.status === 400) {
-          this.errorMessage.set('El nombre de usuario o el correo electrónico ya se encuentran registrados.');
+          this.errorMessage.set(
+            'El nombre de usuario o el correo electrónico ya se encuentran registrados.',
+          );
         } else if (err.status === 0) {
           this.errorMessage.set('Error de red. No se pudo conectar con el servidor.');
         } else {
           this.errorMessage.set('No se pudo completar el registro. Verifica los datos ingresados.');
         }
-        
+
         console.error('Register Error:', err);
-      }
+      },
     });
   }
 }

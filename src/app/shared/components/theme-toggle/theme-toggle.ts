@@ -7,12 +7,10 @@ import { ToggleSwitchChangeEvent } from 'primeng/types/toggleswitch';
   selector: 'app-theme-toggle',
   imports: [FormsModule, ToggleSwitchModule],
   templateUrl: './theme-toggle.html',
-  styleUrls: ['./theme-toggle.css']
+  styleUrls: ['./theme-toggle.css'],
 })
 export class ThemeToggle {
-  isDarkMode = signal<boolean>(
-    document.documentElement.classList.contains('my-app-dark')
-  );
+  isDarkMode = signal<boolean>(document.documentElement.classList.contains('my-app-dark'));
 
   onThemeChange(event: ToggleSwitchChangeEvent): void {
     const htmlElement = document.documentElement;

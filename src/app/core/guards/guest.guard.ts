@@ -3,10 +3,8 @@ import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
 export const guestGuard: CanActivateFn = () => {
-    const authService = inject(AuthService);
-    const router = inject(Router);
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-    return !authService.isAuthenticated()
-        ? true
-        : router.createUrlTree(['/profiles']);
+  return !authService.isAuthenticated() ? true : router.createUrlTree(['/profiles']);
 };

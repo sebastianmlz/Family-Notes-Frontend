@@ -9,7 +9,7 @@ import { ButtonModule } from 'primeng/button';
   selector: 'app-landing',
   imports: [AuthTopbar, LoginForm, RegisterForm, AboutInfo, ButtonModule],
   templateUrl: './landing.html',
-  styleUrls: ['./landing.css']
+  styleUrls: ['./landing.css'],
 })
 export class Landing {
   currentForm = signal<'none' | 'login' | 'register'>('none');

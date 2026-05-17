@@ -13,8 +13,9 @@ describe('Landing', () => {
         unobserve() {}
         disconnect() {}
       }
-      (globalThis as unknown as { IntersectionObserver: typeof IntersectionObserver }).IntersectionObserver =
-        MockIntersectionObserver as unknown as typeof IntersectionObserver;
+      (
+        globalThis as unknown as { IntersectionObserver: typeof IntersectionObserver }
+      ).IntersectionObserver = MockIntersectionObserver as unknown as typeof IntersectionObserver;
     }
   });
 
