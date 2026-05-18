@@ -1,1 +1,81 @@
-<p>profiles works!</p>
+<div
+  class="min-h-screen flex flex-col bg-surface-50 dark:bg-surface-950 transition-colors duration-300"
+>
+  <div class="flex-1 max-w-5xl w-full mx-auto p-6 md:p-12">
+    <div class="profiles-hero text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-black text-color tracking-tight">
+        ¿Quién está mirando?
+      </h1>
+      <p class="text-muted-color text-lg mt-2">Selecciona un perfil de la {{ familyName() }}</p>
+    </div>
+
+    <div
+      class="profile-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 justify-items-center"
+    >
+      @for (profile of profiles(); track profile.id; let i = $index) {
+        <div
+          class="profile-card flex flex-col items-center gap-3 cursor-pointer group"
+          [style.--stagger-index]="i"
+          (click)="goToProfile(profile.id)"
+        >
+          <div
+            class="w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-surface-200 dark:bg-surface-800 border-2 border-transparent group-hover:border-primary transition-all duration-300 flex items-center justify-center shadow-sm group-hover:shadow-lg group-hover:-translate-y-2"
+          >
+            <i
+              class="pi pi-user text-4xl md:text-6xl text-surface-400 dark:text-surface-500 group-hover:text-primary transition-colors"
+            ></i>
+          </div>
+
+          <div class="flex flex-col items-center">
+            <span class="font-bold text-color text-lg group-hover:text-primary transition-colors">{{
+              profile.name
+            }}</span>
+            @if (profile.is_admin) {
+              <span
+                class="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full mt-1 font-medium"
+                >Admin</span
+              >
+            }
+          </div>
+        </div>
+      }
+
+      @if (profiles().length < 6) {
+        <div
+          class="profile-card add-card flex flex-col items-center gap-3 cursor-pointer group"
+          [style.--stagger-index]="profiles().length"
+          (click)="openAddModal()"
+        >
+          <div
+            class="w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-transparent border-2 border-dashed border-surface-300 dark:border-surface-700 hover:border-primary transition-all duration-300 flex items-center justify-center group-hover:bg-primary/5"
+          >
+            <i
+              class="pi pi-plus text-4xl md:text-5xl text-surface-400 dark:text-surface-500 group-hover:text-primary transition-colors"
+            ></i>
+          </div>
+
+          <span
+            class="font-bold text-surface-500 dark:text-surface-400 text-lg group-hover:text-primary transition-colors"
+            >Añadir Perfil</span
+          >
+        </div>
+      }
+    </div>
+  </div>
+
+  <p-dialog
+    header="Nuevo Perfil"
+    [modal]="true"
+    [visible]="showAddModal()"
+    (visibleChange)="handleDialogVisibleChange($event)"
+    [style]="{ width: '25rem' }"
+    [draggable]="false"
+    [resizable]="false"
+    [styleClass]="dialogStyleClass()"
+  >
+    <app-profile-form
+      (success)="handleProfileCreated()"
+      (cancel)="closeAddModal()"
+    ></app-profile-form>
+  </p-dialog>
+</div>
