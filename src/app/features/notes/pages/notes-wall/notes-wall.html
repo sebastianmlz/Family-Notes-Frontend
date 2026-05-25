@@ -1,0 +1,264 @@
+<div
+  class="min-h-screen flex flex-col bg-surface-50 dark:bg-surface-950 transition-colors duration-300"
+>
+  <p-toast></p-toast>
+  <div class="flex-1 max-w-6xl w-full mx-auto p-6 md:p-12 pb-24">
+    <!-- Header Section -->
+    <div
+      pAnimateOnScroll
+      enterClass="animate-enter fade-in-10 slide-in-from-t-8 animate-duration-1000"
+      leaveClass="animate-leave fade-out-0"
+      class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12"
+    >
+      <div>
+        <h1 class="text-4xl font-black text-color tracking-tight flex items-center gap-3">
+          <i class="pi pi-bookmark text-primary text-3xl"></i>
+          Notas de la Familia
+        </h1>
+        <p class="text-muted-color text-lg mt-2">
+          Un muro de recuerdos compartidos, listas y notas diarias de tu hogar.
+        </p>
+      </div>
+
+      <!-- Active Profile Banner -->
+      <div
+        class="flex items-center gap-4 bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 px-5 py-3 rounded-2xl shadow-sm self-start md:self-center"
+      >
+        <div
+          class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center"
+        >
+          <i class="pi pi-user font-bold"></i>
+        </div>
+        <div class="flex flex-col">
+          <span class="text-xs text-muted-color font-medium">Perfil Activo</span>
+          <span class="text-sm font-bold text-color">{{
+            profileStateService.activeProfile()?.name
+          }}</span>
+        </div>
+        <p-button
+          icon="pi pi-sync"
+          [text]="true"
+          severity="secondary"
+          size="small"
+          styleClass="ml-2"
+          (onClick)="changeProfile()"
+          title="Cambiar Perfil"
+        ></p-button>
+      </div>
+    </div>
+
+    <!-- Notes Grid / Empty State -->
+    @if (notes().length === 0) {
+      <div
+        pAnimateOnScroll
+        enterClass="animate-enter fade-in-10 animate-duration-500"
+        class="flex flex-col items-center justify-center py-20 text-center bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-3xl shadow-sm"
+      >
+        <div class="w-20 h-20 rounded-full bg-primary/5 flex items-center justify-center mb-6">
+          <i class="pi pi-clipboard text-primary text-4xl"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-color">No hay notas todavía</h3>
+        <p class="text-muted-color max-w-md mt-2 px-6">
+          Sé el primero en compartir un recuerdo, dejar un recado o escribir una lista para la
+          familia.
+        </p>
+        <p-button
+          label="Crear Primera Nota"
+          icon="pi pi-plus"
+          styleClass="mt-6 px-6 py-3 rounded-xl font-bold"
+          (onClick)="openCreateModal()"
+        ></p-button>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (note of notes(); track note.id; let i = $index) {
+          <div
+            pAnimateOnScroll
+            enterClass="animate-enter fade-in-10 scale-in animate-duration-500"
+            class="note-card flex flex-col bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-3xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            [style.--stagger-index]="i"
+          >
+            <!-- Card Header -->
+            <div class="flex items-start justify-between gap-4 mb-3">
+              <h3 class="text-xl font-bold text-color line-clamp-1 flex-1" [title]="note.title">
+                {{ note.title }}
+              </h3>
+
+              <!-- Authorized Actions -->
+              @if (note.profile === profileStateService.activeProfile()?.id) {
+                <div class="flex gap-1 shrink-0">
+                  <p-button
+                    icon="pi pi-pencil"
+                    [text]="true"
+                    [rounded]="true"
+                    severity="secondary"
+                    size="small"
+                    (onClick)="editNote(note)"
+                    title="Editar nota"
+                  ></p-button>
+                  <p-button
+                    icon="pi pi-trash"
+                    [text]="true"
+                    [rounded]="true"
+                    severity="danger"
+                    size="small"
+                    (onClick)="confirmDelete(note)"
+                    title="Eliminar nota"
+                  ></p-button>
+                </div>
+              }
+            </div>
+
+            <!-- Card Body (Content) -->
+            <p class="text-muted-color whitespace-pre-wrap leading-relaxed flex-grow text-sm mb-4">
+              {{ note.content }}
+            </p>
+
+            <!-- Card Footer -->
+            <div
+              class="flex items-center justify-between mt-auto pt-4 border-t border-surface-100 dark:border-surface-800"
+            >
+              <div
+                class="flex items-center gap-2 bg-surface-50 dark:bg-surface-800 px-3 py-1.5 rounded-full border border-surface-100 dark:border-surface-700"
+              >
+                <i class="pi pi-user text-xs text-primary"></i>
+                <span class="text-xs font-semibold text-muted-color">{{ note.profile_name }}</span>
+              </div>
+              <span class="text-xs text-muted-color">
+                {{ note.created_at | date: 'dd MMM yyyy HH:mm' }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Load More Button -->
+    @if (hasNextPage()) {
+      <div class="flex justify-center mt-12">
+        <p-button
+          label="Cargar más notas"
+          icon="pi pi-chevron-down"
+          styleClass="px-6 py-3 rounded-xl font-bold p-button-outlined"
+          (onClick)="loadMoreNotes()"
+        ></p-button>
+      </div>
+    }
+  </div>
+
+  <!-- Floating Action Button -->
+  <p-button
+    icon="pi pi-plus"
+    [rounded]="true"
+    [raised]="true"
+    styleClass="fixed bottom-8 right-8 z-50 w-16 h-16 shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 !text-xl"
+    (onClick)="openCreateModal()"
+    title="Nueva nota"
+  ></p-button>
+
+  <!-- Create/Edit Modal Dialog -->
+  @if (showModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <!-- Backdrop -->
+      <div
+        class="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity duration-250"
+        [class.opacity-0]="isDialogClosing()"
+        [class.opacity-100]="!isDialogClosing()"
+        (click)="closeModal()"
+      ></div>
+
+      <!-- Dialog Body -->
+      <div
+        class="relative z-10 w-full max-w-lg bg-surface-0 dark:bg-surface-900 p-6 md:p-8 rounded-3xl shadow-2xl border border-surface-200 dark:border-surface-800 note-dialog"
+        [class.note-dialog--closing]="isDialogClosing()"
+      >
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-black text-color tracking-tight">
+            {{ selectedNote() ? 'Editar Nota' : 'Nueva Nota' }}
+          </h2>
+          <p-button
+            icon="pi pi-times"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            styleClass="!w-8 !h-8"
+            (onClick)="closeModal()"
+          ></p-button>
+        </div>
+
+        <app-note-form
+          [noteToEdit]="selectedNote()"
+          (success)="handleModalSuccess()"
+          (formCanceled)="closeModal()"
+        ></app-note-form>
+      </div>
+    </div>
+  }
+
+  <!-- Delete Confirmation Dialog -->
+  @if (showDeleteConfirm()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <!-- Backdrop -->
+      <div
+        class="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity duration-250"
+        [class.opacity-0]="isDeleteDialogClosing()"
+        [class.opacity-100]="!isDeleteDialogClosing()"
+        (click)="closeDeleteConfirm()"
+      ></div>
+
+      <!-- Dialog Body -->
+      <div
+        class="relative z-10 w-full max-w-md bg-surface-0 dark:bg-surface-900 p-6 md:p-8 rounded-3xl shadow-2xl border border-surface-200 dark:border-surface-800 note-dialog"
+        [class.note-dialog--closing]="isDeleteDialogClosing()"
+      >
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold text-color tracking-tight">Confirmar eliminación</h2>
+          <p-button
+            icon="pi pi-times"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            styleClass="!w-8 !h-8"
+            (onClick)="closeDeleteConfirm()"
+            [disabled]="isDeleting()"
+          ></p-button>
+        </div>
+
+        <div class="flex flex-col gap-6">
+          <div class="flex items-start gap-4">
+            <div
+              class="w-12 h-12 rounded-xl bg-red-50 dark:bg-red-950/30 flex items-center justify-center shrink-0"
+            >
+              <i class="pi pi-exclamation-triangle text-red-500 text-2xl"></i>
+            </div>
+            <div class="flex-1">
+              <p class="text-color text-sm leading-relaxed">
+                ¿Estás seguro de que deseas eliminar la nota
+                <strong class="font-semibold">"{{ noteToDelete()?.title }}"</strong>? Esta acción no
+                se puede deshacer.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex gap-3 justify-end">
+            <p-button
+              label="Cancelar"
+              styleClass="px-5 py-2.5 rounded-xl font-semibold p-button-outlined border-surface-300 dark:border-surface-700 text-color hover:bg-surface-100 dark:hover:bg-surface-800"
+              (onClick)="closeDeleteConfirm()"
+              [disabled]="isDeleting()"
+            ></p-button>
+            <p-button
+              label="Eliminar"
+              severity="danger"
+              styleClass="px-5 py-2.5 rounded-xl font-bold"
+              (onClick)="deleteNote()"
+              [loading]="isDeleting()"
+            ></p-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,40 @@
+<form [formGroup]="noteForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6 w-full pt-4">
+  <div class="flex flex-col gap-1 w-full">
+    <p-floatLabel variant="on">
+      <input pInputText id="title" formControlName="title" class="w-full" autocomplete="off" />
+      <label for="title">Título de la nota</label>
+    </p-floatLabel>
+  </div>
+
+  <div class="flex flex-col gap-1 w-full">
+    <p-floatLabel variant="on">
+      <textarea
+        pInputText
+        id="content"
+        formControlName="content"
+        class="w-full min-h-[120px] resize-none"
+        rows="4"
+      ></textarea>
+      <label for="content">Contenido de la nota</label>
+    </p-floatLabel>
+  </div>
+
+  <div class="flex flex-col sm:flex-row gap-3 mt-2">
+    <p-button
+      type="button"
+      label="Cancelar"
+      icon="pi pi-times"
+      styleClass="w-full py-3 rounded-xl font-semibold p-button-outlined"
+      [disabled]="isLoading()"
+      (onClick)="handleCancel()"
+    ></p-button>
+    <p-button
+      type="submit"
+      [label]="noteToEdit ? 'Guardar Cambios' : 'Crear Nota'"
+      icon="pi pi-check"
+      styleClass="w-full py-3 rounded-xl font-bold"
+      [loading]="isLoading()"
+      [disabled]="noteForm.invalid || isLoading()"
+    ></p-button>
+  </div>
+</form>

@@ -1,6 +1,7 @@
 <div
   class="min-h-screen flex flex-col bg-surface-50 dark:bg-surface-950 transition-colors duration-300"
 >
+  <p-toast></p-toast>
   <div class="flex-1 max-w-5xl w-full mx-auto p-6 md:p-12">
     <div class="profiles-hero text-center mb-12">
       <h1 class="text-4xl md:text-5xl font-black text-color tracking-tight">
@@ -78,4 +79,93 @@
       (cancel)="closeAddModal()"
     ></app-profile-form>
   </p-dialog>
+
+  <!-- PIN verification modal -->
+  @if (showPinModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <!-- Backdrop -->
+      <div
+        class="absolute inset-0 bg-black/40 backdrop-blur-xs transition-opacity duration-220"
+        [class.opacity-0]="isPinDialogClosing()"
+        [class.opacity-100]="!isPinDialogClosing()"
+        (click)="closePinModal()"
+      ></div>
+
+      <!-- Dialog Body -->
+      <div
+        class="relative z-10 w-full max-w-md bg-surface-0 dark:bg-surface-900 p-6 md:p-8 rounded-3xl shadow-2xl border border-surface-200 dark:border-surface-800 pin-dialog"
+        [class.pin-dialog--closing]="isPinDialogClosing()"
+      >
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold text-color tracking-tight">Confirmar PIN</h2>
+          <p-button
+            icon="pi pi-times"
+            [text]="true"
+            [rounded]="true"
+            severity="secondary"
+            styleClass="!w-8 !h-8"
+            (onClick)="closePinModal()"
+            [disabled]="isPinVerifying()"
+          ></p-button>
+        </div>
+
+        <form [formGroup]="pinForm" (ngSubmit)="verifyPin()" class="flex flex-col gap-6">
+          <div class="flex flex-col items-center text-center gap-3">
+            <div
+              class="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-inner"
+            >
+              <i class="pi pi-lock text-3xl"></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-color">
+                Ingresa el PIN de {{ selectedProfile()?.name }}
+              </h3>
+              <p class="text-xs text-muted-color mt-1">
+                Este perfil está protegido para proteger tu privacidad.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <p-float-label>
+              <input
+                pInputText
+                id="pin-verify"
+                type="password"
+                formControlName="pin"
+                autocomplete="current-password"
+                maxlength="6"
+                class="w-full text-center tracking-[0.5em] font-mono text-xl py-3.5 rounded-xl border border-surface-300 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 focus:border-primary transition-all duration-200"
+                autofocus
+              />
+              <label for="pin-verify" class="text-muted-color">PIN de Acceso</label>
+            </p-float-label>
+            @if (pinForm.controls.pin.touched && pinForm.controls.pin.invalid) {
+              <span class="text-xs text-red-500 font-semibold px-1"
+                >El PIN debe tener entre 4 y 6 dígitos.</span
+              >
+            }
+          </div>
+
+          <div class="flex gap-3 mt-2">
+            <p-button
+              label="Cancelar"
+              type="button"
+              styleClass="flex-1 py-3 font-semibold rounded-xl p-button-outlined border-surface-300 dark:border-surface-700 text-color hover:bg-surface-100 dark:hover:bg-surface-800"
+              (onClick)="closePinModal()"
+              [disabled]="isPinVerifying()"
+            ></p-button>
+            <p-button
+              label="Ingresar"
+              type="submit"
+              styleClass="flex-1 py-3 font-bold rounded-xl shadow-md"
+              [loading]="isPinVerifying()"
+              [disabled]="pinForm.invalid"
+            ></p-button>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
 </div>

@@ -18,4 +18,8 @@ export class ProfilesService {
   createProfile(data: CreateProfileDTO): Observable<Profile> {
     return this.http.post<Profile>(this.apiUrl, data);
   }
+
+  verifyPin(profileId: string, pin: string): Observable<{ valid: boolean }> {
+    return this.http.post<{ valid: boolean }>(`${this.apiUrl}${profileId}/verify-pin/`, { pin });
+  }
 }
