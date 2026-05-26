@@ -3,3 +3,47 @@
 @import 'tailwindcss';
 @import 'tailwindcss-primeui';
 @custom-variant dark (&:where(.my-app-dark, .my-app-dark *));
+
+/* Warm domestic theme customization for light mode */
+:root:not(.my-app-dark) {
+  --p-surface-0: #fdfcf7;
+  --p-surface-50: #faf6eb;
+  --p-surface-100: #f3ebd9;
+  --p-surface-200: #e9ddc6;
+  --p-surface-300: #decbb2;
+  --p-surface-400: #bfa68f;
+  --p-surface-500: #a0846c;
+  --p-surface-600: #816752;
+  --p-surface-700: #66503f;
+  --p-surface-800: #4d3b2c;
+  --p-surface-900: #33261a;
+  --p-surface-950: #1d140d;
+
+  --p-primary-50: #fdf6f2;
+  --p-primary-100: #fbece4;
+  --p-primary-200: #f6d5c6;
+  --p-primary-300: #f0b49c;
+  --p-primary-400: #e48564;
+  --p-primary-500: #d45d3b;
+  --p-primary-600: #bd4c29;
+  --p-primary-700: #9d3c20;
+  --p-primary-800: #7e321b;
+  --p-primary-900: #662c19;
+  --p-primary-950: #3a150b;
+}
+
+/* Warm sunset-terracotta primary accent for dark mode */
+.my-app-dark {
+  --p-primary-50: #2d1712;
+  --p-primary-100: #4d2319;
+  --p-primary-200: #743122;
+  --p-primary-300: #9c412b;
+  --p-primary-400: #c55438;
+  --p-primary-500: #e06c50;
+  --p-primary-600: #e78972;
+  --p-primary-700: #eea795;
+  --p-primary-800: #f5c5b8;
+  --p-primary-900: #fbe3dc;
+  --p-primary-950: #fef2ee;
+}
+

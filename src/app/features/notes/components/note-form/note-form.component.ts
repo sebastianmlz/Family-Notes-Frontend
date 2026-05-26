@@ -1,11 +1,9 @@
 import {
   Component,
   inject,
-  Input,
-  Output,
-  EventEmitter,
-  OnChanges,
-  SimpleChanges,
+  input,
+  output,
+  effect,
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -36,14 +34,14 @@ import { ProfileStateService } from '../../../../core/services/profile-state.ser
   templateUrl: './note-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NoteForm implements OnChanges {
+export class NoteForm {
   private fb = inject(FormBuilder);
   private notesService = inject(NotesService);
   private profileStateService = inject(ProfileStateService);
 
-  @Input() noteToEdit: Note | null = null;
-  @Output() success = new EventEmitter<void>();
-  @Output() formCanceled = new EventEmitter<void>();
+  noteToEdit = input<Note | null>(null);
+  success = output<void>();
+  formCanceled = output<void>();
 
   isLoading = signal<boolean>(false);
 
@@ -52,12 +50,13 @@ export class NoteForm implements OnChanges {
     content: ['', [Validators.required]],
   });
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['noteToEdit']) {
-      if (this.noteToEdit) {
+  constructor() {
+    effect(() => {
+      const note = this.noteToEdit();
+      if (note) {
         this.noteForm.patchValue({
-          title: this.noteToEdit.title,
-          content: this.noteToEdit.content,
+          title: note.title,
+          content: note.content,
         });
       } else {
         this.noteForm.reset({
@@ -65,60 +64,66 @@ export class NoteForm implements OnChanges {
           content: '',
         });
       }
-    }
+    });
   }
 
   onSubmit(): void {
     if (this.noteForm.invalid) return;
 
-    this.isLoading.set(true);
-
     const profileId = this.profileStateService.activeProfile()?.id;
     if (!profileId) {
-      this.isLoading.set(false);
       console.error('No active profile found');
       return;
     }
 
-    if (this.noteToEdit) {
-      // Update
-      const data: UpdateNoteDTO = {
-        title: this.noteForm.controls.title.value,
-        content: this.noteForm.controls.content.value,
-        profile: profileId,
-      };
+    this.isLoading.set(true);
 
-      this.notesService.updateNote(this.noteToEdit.id, data).subscribe({
-        next: () => {
-          this.isLoading.set(false);
-          this.noteForm.reset();
-          this.success.emit();
-        },
-        error: (err) => {
-          this.isLoading.set(false);
-          console.error('Error updating note:', err);
-        },
-      });
+    const currentNote = this.noteToEdit();
+    if (currentNote) {
+      this.updateNote(profileId, currentNote);
     } else {
-      // Create
-      const data: CreateNoteDTO = {
-        profile: profileId,
-        title: this.noteForm.controls.title.value,
-        content: this.noteForm.controls.content.value,
-      };
-
-      this.notesService.createNote(data).subscribe({
-        next: () => {
-          this.isLoading.set(false);
-          this.noteForm.reset();
-          this.success.emit();
-        },
-        error: (err) => {
-          this.isLoading.set(false);
-          console.error('Error creating note:', err);
-        },
-      });
+      this.createNote(profileId);
     }
+  }
+
+  private createNote(profileId: string): void {
+    const data: CreateNoteDTO = {
+      profile: profileId,
+      title: this.noteForm.controls.title.value,
+      content: this.noteForm.controls.content.value,
+    };
+
+    this.notesService.createNote(data).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.noteForm.reset();
+        this.success.emit();
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        console.error('Error creating note:', err);
+      },
+    });
+  }
+
+  private updateNote(profileId: string, note: Note): void {
+    const data: UpdateNoteDTO = {
+      title: this.noteForm.controls.title.value,
+      content: this.noteForm.controls.content.value,
+      profile: profileId,
+    };
+
+    this.notesService.updateNote(note.id, data).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.noteForm.reset();
+        this.success.emit();
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        console.error('Error updating note:', err);
+      },
+    });
   }
 
   handleCancel(): void {

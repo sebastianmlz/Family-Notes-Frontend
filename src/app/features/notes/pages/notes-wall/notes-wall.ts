@@ -35,6 +35,7 @@ export class NotesWall implements OnInit {
   public profileStateService = inject(ProfileStateService);
   private messageService = inject(MessageService);
   notes = signal<Note[]>([]);
+  isLoading = signal<boolean>(true);
   showModal = signal<boolean>(false);
   selectedNote = signal<Note | null>(null);
 
@@ -66,19 +67,17 @@ export class NotesWall implements OnInit {
   );
 
   ngOnInit() {
-    if (!this.profileStateService.activeProfile()) {
-      this.router.navigate(['/profiles']);
-      return;
-    }
     this.loadNotes();
   }
 
   loadNotes() {
+    this.isLoading.set(true);
     this.currentPage.set(1);
     this.notesService.getNotes(1).subscribe({
       next: (data) => {
         this.notes.set(data.results);
         this.hasNextPage.set(data.hasNext);
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Family Notes - Error loading notes:', err);
@@ -87,6 +86,7 @@ export class NotesWall implements OnInit {
           summary: 'Error',
           detail: 'No se pudieron cargar las notas de la familia.',
         });
+        this.isLoading.set(false);
       },
     });
   }

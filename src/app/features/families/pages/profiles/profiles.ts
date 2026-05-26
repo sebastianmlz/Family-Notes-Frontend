@@ -47,6 +47,7 @@ export class Profiles implements OnInit {
   profiles = signal<Profile[]>([]);
   familyName = signal<string>('Familia...');
   showAddModal = signal<boolean>(false);
+  isLoading = signal<boolean>(true);
 
   selectedProfile = signal<Profile | null>(null);
   showPinModal = signal<boolean>(false);
@@ -77,9 +78,16 @@ export class Profiles implements OnInit {
   }
 
   loadProfiles() {
+    this.isLoading.set(true);
     this.profilesService.getProfiles().subscribe({
-      next: (data) => this.profiles.set(data),
-      error: (err) => console.error('Error cargando perfiles', err),
+      next: (data) => {
+        this.profiles.set(data);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error cargando perfiles', err);
+        this.isLoading.set(false);
+      },
     });
   }
 

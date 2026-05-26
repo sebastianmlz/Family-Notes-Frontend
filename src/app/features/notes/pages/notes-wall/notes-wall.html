@@ -47,8 +47,28 @@
       </div>
     </div>
 
-    <!-- Notes Grid / Empty State -->
-    @if (notes().length === 0) {
+    <!-- Notes Grid / Loading State / Empty State -->
+    @if (isLoading()) {
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (skele of [1, 2, 3]; track skele) {
+          <div
+            class="bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-3xl p-6 shadow-sm animate-pulse flex flex-col gap-4"
+          >
+            <div class="h-6 bg-surface-200 dark:bg-surface-800 rounded w-2/3"></div>
+            <div class="space-y-2 flex-grow">
+              <div class="h-4 bg-surface-200 dark:bg-surface-800 rounded w-full"></div>
+              <div class="h-4 bg-surface-200 dark:bg-surface-800 rounded w-5/6"></div>
+            </div>
+            <div
+              class="flex justify-between items-center pt-4 border-t border-surface-100 dark:border-surface-800 mt-4"
+            >
+              <div class="h-5 bg-surface-200 dark:bg-surface-800 rounded-full w-24"></div>
+              <div class="h-4 bg-surface-200 dark:bg-surface-800 rounded w-16"></div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else if (notes().length === 0) {
       <div
         pAnimateOnScroll
         enterClass="animate-enter fade-in-10 animate-duration-500"
@@ -75,58 +95,70 @@
           <div
             pAnimateOnScroll
             enterClass="animate-enter fade-in-10 scale-in animate-duration-500"
-            class="note-card flex flex-col bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-3xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+            class="note-card-wrapper"
             [style.--stagger-index]="i"
           >
-            <!-- Card Header -->
-            <div class="flex items-start justify-between gap-4 mb-3">
-              <h3 class="text-xl font-bold text-color line-clamp-1 flex-1" [title]="note.title">
-                {{ note.title }}
-              </h3>
-
-              <!-- Authorized Actions -->
-              @if (note.profile === profileStateService.activeProfile()?.id) {
-                <div class="flex gap-1 shrink-0">
-                  <p-button
-                    icon="pi pi-pencil"
-                    [text]="true"
-                    [rounded]="true"
-                    severity="secondary"
-                    size="small"
-                    (onClick)="editNote(note)"
-                    title="Editar nota"
-                  ></p-button>
-                  <p-button
-                    icon="pi pi-trash"
-                    [text]="true"
-                    [rounded]="true"
-                    severity="danger"
-                    size="small"
-                    (onClick)="confirmDelete(note)"
-                    title="Eliminar nota"
-                  ></p-button>
-                </div>
-              }
-            </div>
-
-            <!-- Card Body (Content) -->
-            <p class="text-muted-color whitespace-pre-wrap leading-relaxed flex-grow text-sm mb-4">
-              {{ note.content }}
-            </p>
-
-            <!-- Card Footer -->
             <div
-              class="flex items-center justify-between mt-auto pt-4 border-t border-surface-100 dark:border-surface-800"
+              class="note-card relative flex flex-col bg-surface-0 dark:bg-surface-900 border border-surface-200 dark:border-surface-800 rounded-3xl p-6 shadow-sm hover:shadow-lg transition-all duration-300"
             >
+              <!-- Pinned Tape Decoration -->
               <div
-                class="flex items-center gap-2 bg-surface-50 dark:bg-surface-800 px-3 py-1.5 rounded-full border border-surface-100 dark:border-surface-700"
-              >
-                <i class="pi pi-user text-xs text-primary"></i>
-                <span class="text-xs font-semibold text-muted-color">{{ note.profile_name }}</span>
+                class="absolute -top-2.5 left-1/2 -translate-x-1/2 w-20 h-5 bg-yellow-100/60 dark:bg-yellow-950/40 border border-yellow-200/40 dark:border-yellow-900/30 rotate-[-1.5deg] backdrop-blur-[1px] shadow-xs pointer-events-none rounded-xs z-10"
+              ></div>
+              <!-- Card Header -->
+              <div class="flex items-start justify-between gap-4 mb-3">
+                <h3 class="text-xl font-bold text-color line-clamp-1 flex-1" [title]="note.title">
+                  {{ note.title }}
+                </h3>
+
+                <!-- Authorized Actions -->
+                @if (note.profile === profileStateService.activeProfile()?.id) {
+                  <div class="flex gap-1 shrink-0">
+                    <p-button
+                      icon="pi pi-pencil"
+                      [text]="true"
+                      [rounded]="true"
+                      severity="secondary"
+                      size="small"
+                      (onClick)="editNote(note)"
+                      title="Editar nota"
+                    ></p-button>
+                    <p-button
+                      icon="pi pi-trash"
+                      [text]="true"
+                      [rounded]="true"
+                      severity="danger"
+                      size="small"
+                      (onClick)="confirmDelete(note)"
+                      title="Eliminar nota"
+                    ></p-button>
+                  </div>
+                }
               </div>
-              <span class="text-xs text-muted-color">
-                {{ note.created_at | date: 'dd MMM yyyy HH:mm' }}
-              </span>
+
+              <!-- Card Body (Content) -->
+              <p
+                class="text-muted-color whitespace-pre-wrap leading-relaxed flex-grow text-sm mb-4"
+              >
+                {{ note.content }}
+              </p>
+
+              <!-- Card Footer -->
+              <div
+                class="flex items-center justify-between mt-auto pt-4 border-t border-surface-100 dark:border-surface-800"
+              >
+                <div
+                  class="flex items-center gap-2 bg-surface-50 dark:bg-surface-800 px-3 py-1.5 rounded-full border border-surface-100 dark:border-surface-700"
+                >
+                  <i class="pi pi-user text-xs text-primary"></i>
+                  <span class="text-xs font-semibold text-muted-color">{{
+                    note.profile_name
+                  }}</span>
+                </div>
+                <span class="text-xs text-muted-color">
+                  {{ note.created_at | date: 'dd MMM yyyy HH:mm' }}
+                </span>
+              </div>
             </div>
           </div>
         }

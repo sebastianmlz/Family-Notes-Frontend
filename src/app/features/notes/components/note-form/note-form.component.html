@@ -30,7 +30,7 @@
     ></p-button>
     <p-button
       type="submit"
-      [label]="noteToEdit ? 'Guardar Cambios' : 'Crear Nota'"
+      [label]="noteToEdit() ? 'Guardar Cambios' : 'Crear Nota'"
       icon="pi pi-check"
       styleClass="w-full py-3 rounded-xl font-bold"
       [loading]="isLoading()"
